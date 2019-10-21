@@ -35,6 +35,39 @@ export class FlowchartComponent implements OnInit {
         sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
         Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis 
         nisl ut aliquip ex ea commodo consequat.`
+      },
+      {
+        id: '18-676404',
+        connectionId: 'R3',
+        midas: 'Midas #',
+        outputs: 0,
+        isDrawn: false,
+        description: `Lorem ipsum dolor sit amet, consectetuer adipiscing elit, 
+        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
+        Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis 
+        nisl ut aliquip ex ea commodo consequat.`
+      },
+      {
+        id: '18-676404',
+        connectionId: 'R4',
+        midas: 'Midas #',
+        outputs: 0,
+        isDrawn: false,
+        description: `Lorem ipsum dolor sit amet, consectetuer adipiscing elit, 
+        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
+        Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis 
+        nisl ut aliquip ex ea commodo consequat.`
+      },
+      {
+        id: '18-676404',
+        connectionId: 'R5',
+        midas: 'Midas #',
+        outputs: 0,
+        isDrawn: false,
+        description: `Lorem ipsum dolor sit amet, consectetuer adipiscing elit, 
+        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
+        Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis 
+        nisl ut aliquip ex ea commodo consequat.`
       }
     ],
     circles: [
@@ -49,19 +82,35 @@ export class FlowchartComponent implements OnInit {
         connectionId: 'C2',
         isDrawn: false,
         description: 'Reaction info'
+      },
+      {
+        id: '2',
+        connectionId: 'C3',
+        isDrawn: false,
+        description: 'Reaction info'
+      },
+      {
+        id: '2',
+        connectionId: 'C4',
+        isDrawn: false,
+        description: 'Reaction info'
       }
     ],
     connections: [
       'R1-1:C1-1',
       'C1-1:R2-1',
-      'R2-1:C2-1'
+      'R2-1:C2-1',
+      'C2-1:R3-1',
+      'R3-1:C3-1',
+      'C3-1:R4-1',
+      'R4-1:C4-1'
     ]
   };
 
   constructor() { }
 
   ngOnInit() {
-    this.Flowchart = d3.select('#flow-chart').append('div');
+    this.Flowchart = d3.select('#flow-chart')
 
     //Find total outputs for a rectangle
     this.DATA.connections.forEach( (connection: string) => {
@@ -84,8 +133,8 @@ export class FlowchartComponent implements OnInit {
           if(index === 0) {
             this.addRectangle(this.Flowchart, null, from);
           } 
-          // guess is that from will only be created once in the beginning.
-          // Afterwards the to node will become from node eventually (Not sure).
+          // guess is that 'from' will only be created once in the beginning.
+          // Afterwards the 'to' node will become 'from' node eventually (Not sure).
         }
       } else if(from[0] === 'C') {
         const circ = this.DATA.circles.find(circle => circle.connectionId === from);
@@ -100,15 +149,24 @@ export class FlowchartComponent implements OnInit {
 
       } else if(to[0] === 'C') {
         const inputNode = d3.select(`#${from}`);
+        const rect = this.DATA.rectangles.find(rectangle => rectangle.connectionId === from);
         const circ = this.DATA.circles.find(circle => circle.connectionId === to);
         if(!circ.isDrawn) {
           circ.isDrawn = true;
-          this.addCircle(this.Flowchart, inputNode, to);
+          this.addCircle(this.Flowchart, inputNode, to, +fromPort, rect.outputs);
         }
       }
 
       this.addLine(this.Flowchart, d3.select(`#${from}`), d3.select(`#${to}`));
     });
+
+    // d3.selectAll('.rectangle').on('click', function() {
+    //   console.log('Rectangle',);
+    // })
+
+    // d3.selectAll('.circle').on('click', function() {
+    //   console.log('Circle');
+    // })
   }
 
   private addRectangle(parent, neighbour, id=''): any {
@@ -127,19 +185,22 @@ export class FlowchartComponent implements OnInit {
       .style('left', left + 'px')
   }
 
-  private addLine(parent, from, to) {
+  private addLine(parent, from, to): any {
     const toDomRect = to.node().getBoundingClientRect();
     const fromDomRect = from.node().getBoundingClientRect();
+    const width = toDomRect.left - (fromDomRect.left + fromDomRect.width);
     return parent
       .append('div')
       .attr('class', 'line')
-      .style('top', toDomRect.top + toDomRect.height / 2 + 'px')
+      .style('width', width + 'px')
+      .style('top', fromDomRect.top + fromDomRect.height / 2 + 'px')
       .style('left', fromDomRect.left + fromDomRect.width + 'px');
   }
 
-  private addCircle(parent, neighbour, id=''): any {
+  private addCircle(parent, neighbour, id='', fromPort, totalPorts): any {
       const domRect = neighbour.node().getBoundingClientRect();
       const top = domRect.top + domRect.height / 4;
+      // const top = domRect.top + fromPort*(domRect.height / (totalPorts * 2));
       const left = domRect.left + domRect.width + this.lineWidth;
       return parent
         .append('div')
