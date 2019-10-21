@@ -3,10 +3,12 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { FlowchartComponent } from './flowchart/flowchart.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    FlowchartComponent
   ],
   imports: [
     BrowserModule,

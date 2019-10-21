@@ -1,0 +1,42 @@
+#flow-chart {
+    width: 100vw;
+    height: 400px;
+    overflow: auto;
+    background-color: rgb(201, 198, 198);
+}  
+
+::ng-deep .rectangle {
+    position: absolute;
+    border: 5px solid #a2a2a2;
+    color: black;
+    width: 300px;
+    height: 200px;
+    padding: 1.0rem;
+
+    // .header {
+
+    // }
+
+    // .sub-header {
+        
+    // }
+
+    // .description {
+
+    // }
+}
+
+::ng-deep .line {
+    position: absolute;
+    background-color: #a2a2a2;
+    height: 5px;
+    width: 100px;
+}
+
+::ng-deep .circle {
+    position: absolute;
+    border: 5px solid #a2a2a2;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+}
