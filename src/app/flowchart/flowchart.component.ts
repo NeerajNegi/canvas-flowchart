@@ -125,15 +125,11 @@ export class FlowchartComponent implements OnInit {
     connections: [
       'R1-1:C1-1',
       'R1-2:C2-1',
-      'R1-3:C4-1',
+      'R1-3:C3-1',
+      // 'R1-4:C3-1',
       'C1-1:R2-1',
-      'R2-1:C3-1',
-      'C3-1:R3-1',
-      
-      // 'C2-1:R3-1',
-      // 'R3-1:C3-1',
-      // 'C3-1:R4-1',
-      // 'R4-1:C4-1'
+      'R2-1:C4-1',
+      'C4-1:R3-1',
     ]
   };
 
@@ -217,6 +213,14 @@ export class FlowchartComponent implements OnInit {
           .enter()
           .append('p')
           .text((d) => d)
+
+        childrenList
+          .append('button')
+          .attr('class', 'btn cancel')
+          .text(() => 'Cancel')
+          .on('click', () => {
+            d3.select(`#${rect.id}`).remove();
+          })
       }
     });
   }

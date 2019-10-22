@@ -14,6 +14,7 @@
     height: 200px;
     padding: 1.0rem;
     overflow: auto;
+    cursor: pointer;
 
     // .header {
 
@@ -42,9 +43,22 @@
 
 ::ng-deep .children-list {
     position: absolute;
-    background: #6f6a68;
+    background: #908e8d;
     z-index: 9;
     width: 150px;
-    height: 300px;
+    max-height: 300px;
     padding: 0.5rem;
+}
+
+::ng-deep .btn {
+    width: 50px;
+    height: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+::ng-deep .cancel {
+    background: #7e8b96;
+    color: white;
 }
