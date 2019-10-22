@@ -126,7 +126,6 @@ export class FlowchartComponent implements OnInit {
       'R1-1:C1-1',
       'R1-2:C2-1',
       'R1-3:C3-1',
-      // 'R1-4:C3-1',
       'C1-1:R2-1',
       'R2-1:C4-1',
       'C4-1:R3-1',
