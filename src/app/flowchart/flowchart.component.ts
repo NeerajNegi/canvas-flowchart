@@ -98,12 +98,15 @@ export class FlowchartComponent implements OnInit {
     ],
     connections: [
       'R1-1:C1-1',
+      'R1-2:C2-1',
       'C1-1:R2-1',
-      'R2-1:C2-1',
-      'C2-1:R3-1',
-      'R3-1:C3-1',
+      'R2-1:C3-1',
       'C3-1:R4-1',
       'R4-1:C4-1'
+      // 'C2-1:R3-1',
+      // 'R3-1:C3-1',
+      // 'C3-1:R4-1',
+      // 'R4-1:C4-1'
     ]
   };
 
@@ -113,15 +116,13 @@ export class FlowchartComponent implements OnInit {
     this.Flowchart = d3.select('#flow-chart')
 
     //Find total outputs for a rectangle
-    this.DATA.connections.forEach( (connection: string) => {
-      const recId = connection.substr(0, 2);
-      const rect = this.DATA.rectangles.find( rectangle => rectangle.connectionId === recId);
-      if(typeof rect !== 'undefined') {
-        rect.outputs += 1
-      }
-    });
+    this.calculateNumberOfOutputs();
 
     //Draw Nodes
+    this.drawNodes();
+  }
+
+  private drawNodes(): void {
     this.DATA.connections.forEach((connection: string, index: number) => {
       const [ from, fromPort ] = connection.split(':')[0].split('-');
       const [ to, toPort ] = connection.split(':')[1].split('-');
@@ -159,14 +160,16 @@ export class FlowchartComponent implements OnInit {
 
       this.addLine(this.Flowchart, d3.select(`#${from}`), d3.select(`#${to}`));
     });
+  }
 
-    // d3.selectAll('.rectangle').on('click', function() {
-    //   console.log('Rectangle',);
-    // })
-
-    // d3.selectAll('.circle').on('click', function() {
-    //   console.log('Circle');
-    // })
+  private calculateNumberOfOutputs(): void {
+    this.DATA.connections.forEach( (connection: string) => {
+      const recId = connection.substr(0, 2);
+      const rect = this.DATA.rectangles.find( rectangle => rectangle.connectionId === recId);
+      if(typeof rect !== 'undefined') {
+        rect.outputs += 1
+      }
+    });
   }
 
   private addRectangle(parent, neighbour, id=''): any {
@@ -193,14 +196,14 @@ export class FlowchartComponent implements OnInit {
       .append('div')
       .attr('class', 'line')
       .style('width', width + 'px')
-      .style('top', fromDomRect.top + fromDomRect.height / 2 + 'px')
+      .style('top', toDomRect.top + toDomRect.height / 2 + 'px')
       .style('left', fromDomRect.left + fromDomRect.width + 'px');
   }
 
   private addCircle(parent, neighbour, id='', fromPort, totalPorts): any {
       const domRect = neighbour.node().getBoundingClientRect();
-      const top = domRect.top + domRect.height / 4;
-      // const top = domRect.top + fromPort*(domRect.height / (totalPorts * 2));
+      // const top = domRect.top + domRect.height / 4;
+      const top = domRect.top + (fromPort * 2 - 1)*(domRect.height / (totalPorts * 2)) - 50;
       const left = domRect.left + domRect.width + this.lineWidth;
       return parent
         .append('div')
