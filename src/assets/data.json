@@ -1,0 +1,68 @@
+{
+    "rectangles": [
+        {
+          "id": "R1-676404",
+          "connectionId": "R1",
+          "outputs": 0,
+          "isDrawn": false,
+          "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam.",
+          "children": [
+            "ch1",
+            "ch2",
+            "ch3",
+            "ch4"
+          ]
+        },
+        {
+            "id": "R2-676404",
+            "connectionId": "R2",
+            "outputs": 0,
+            "isDrawn": false,
+            "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam.",
+            "children": [
+              "ch1",
+              "ch2",
+              "ch3",
+              "ch4"
+            ]
+        },
+        {
+            "id": "R3-676404",
+            "connectionId": "R3",
+            "outputs": 0,
+            "isDrawn": false,
+            "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam.",
+            "children": [
+              "ch1",
+              "ch2",
+              "ch3",
+              "ch4"
+            ]
+        }
+      ],
+      "circles": [
+        {
+          "id": "C1",
+          "connectionId": "C1",
+          "isDrawn": false,
+          "description": "Reaction info"
+        },
+        {
+            "id": "C2",
+            "connectionId": "C2",
+            "isDrawn": false,
+            "description": "Reaction info"
+        },
+        {
+          "id": "C3",
+          "connectionId": "C3",
+          "isDrawn": false,
+          "description": "Reaction info"
+        }
+      ],
+      "connections": [
+        "R1-1:C1-1",
+        "R1-2:C2-1",
+        "C1-1:R2-1"
+      ]
+}

@@ -1,0 +1,41 @@
+{
+    "root": {
+        "id": "18-676404",
+        "description": "description rem ipsum dolor sit amet, consecteture adipiscing elit, sed",
+        "children": [
+            {
+                "id": "18-676404-1",
+                "description": "First child",
+                "children": [],
+                "branches": []
+            },
+            {
+                "id": "18-676404-2",
+                "description": "Second child",
+                "children": [],
+                "branches": []
+            }
+        ],
+        "branches": [
+            {
+                "process": "LAZ-2019-12348",
+                "material": {
+                    "id": "18-676406",
+                    "description": "Description rem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam...",
+                    "children": [],
+                    "branches": [
+                        {
+                            "process": "LAZ-2019-12347",
+                            "material": {
+                                "id": "18-676405",
+                                "description": "Description rem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam...",
+                                "children": [],
+                                "branches": []
+                            }
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

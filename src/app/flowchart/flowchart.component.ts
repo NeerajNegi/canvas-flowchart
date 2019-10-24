@@ -1,6 +1,6 @@
+import { DataLoaderService } from './../services/data-loader.service';
 import { Component, OnInit } from '@angular/core';
 import * as d3 from 'd3';
-import { descending, thresholdFreedmanDiaconis } from 'd3';
 
 @Component({
   selector: 'app-flowchart',
@@ -10,138 +10,24 @@ import { descending, thresholdFreedmanDiaconis } from 'd3';
 export class FlowchartComponent implements OnInit {
 
   Flowchart: any;
+  flowchartElement: any;
   lineWidth: number = 100;
   circleRadius: number = 100;
+  DATA: any;
 
-  DATA: any = {
-    rectangles: [
-      {
-        id: 'R1-676404',
-        connectionId: 'R1',
-        midas: 'Midas #',
-        outputs: 0,
-        isDrawn: false,
-        description: `Lorem ipsum dolor sit amet, consectetuer adipiscing elit, 
-        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
-        Ut wisi enim ad minim veniam.`,
-        children: [
-          'ch1',
-          'ch2',
-          'ch3',
-          'ch4'
-        ]
-      },
-      {
-        id: 'R2-676404',
-        connectionId: 'R2',
-        midas: 'Midas #',
-        outputs: 0,
-        isDrawn: false,
-        description: `Lorem ipsum dolor sit amet, consectetuer adipiscing elit, 
-        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
-        Ut wisi enim ad minim veniam.`,
-        children: [
-          'ch1',
-          'ch2',
-          'ch3',
-          'ch4'
-        ]
-      },
-      {
-        id: 'R3-676404',
-        connectionId: 'R3',
-        midas: 'Midas #',
-        outputs: 0,
-        isDrawn: false,
-        description: `Lorem ipsum dolor sit amet, consectetuer adipiscing elit, 
-        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
-        Ut wisi enim ad minim veniam.`,
-        children: [
-          'ch1',
-          'ch2',
-          'ch3',
-          'ch4'
-        ]
-      },
-      {
-        id: '18-676404',
-        connectionId: 'R4',
-        midas: 'Midas #',
-        outputs: 0,
-        isDrawn: false,
-        description: `Lorem ipsum dolor sit amet, consectetuer adipiscing elit, 
-        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
-        Ut wisi enim ad minim veniam.`,
-        children: [
-          'ch1',
-          'ch2',
-          'ch3',
-          'ch4'
-        ]
-      },
-      {
-        id: '18-676404',
-        connectionId: 'R5',
-        midas: 'Midas #',
-        outputs: 0,
-        isDrawn: false,
-        description: `Lorem ipsum dolor sit amet, consectetuer adipiscing elit, 
-        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. 
-        Ut wisi enim ad minim veniam.`,
-        children: [
-          'ch1',
-          'ch2',
-          'ch3',
-          'ch4'
-        ]
-      }
-    ],
-    circles: [
-      {
-        id: '1',
-        connectionId: 'C1',
-        isDrawn: false,
-        description: 'Reaction info'
-      },
-      {
-        id: '2',
-        connectionId: 'C2',
-        isDrawn: false,
-        description: 'Reaction info'
-      },
-      {
-        id: '2',
-        connectionId: 'C3',
-        isDrawn: false,
-        description: 'Reaction info'
-      },
-      {
-        id: '2',
-        connectionId: 'C4',
-        isDrawn: false,
-        description: 'Reaction info'
-      }
-    ],
-    connections: [
-      'R1-1:C1-1',
-      'R1-2:C2-1',
-      'R1-3:C3-1',
-      'C1-1:R2-1',
-      'R2-1:C4-1',
-      'C4-1:R3-1',
-    ]
-  };
-
-  constructor() { }
+  constructor(private dataLoader: DataLoaderService) { }
 
   ngOnInit() {
     this.Flowchart = d3.select('#flow-chart')
 
-    //Find total outputs for a rectangle
-    this.calculateNumberOfOutputs();
+    this.dataLoader.getJSON().subscribe(res => {
+      this.DATA = res;
 
-    //Draw Nodes
-    this.drawNodes();
+      //Find total outputs for a rectangle
+      this.calculateNumberOfOutputs();
+      //Draw Nodes
+      this.drawNodes();
+    }); 
   }
 
   private drawNodes(): void {
@@ -194,11 +80,9 @@ export class FlowchartComponent implements OnInit {
     const description = node.append('p').text(() => rect.description);
     node.on('click', () => {
       const nodeDomRect = node.node().getBoundingClientRect();
-      console.log(nodeDomRect);
       if(d3.select(`#${rect.id}`).empty()) {
-        
         const top = nodeDomRect.top - 20;
-        const left = nodeDomRect.left + nodeDomRect.width - 20;
+        const left = this.Flowchart.node().scrollLeft + nodeDomRect.left + nodeDomRect.width - 20;
         let childrenList = this.Flowchart
           .append('div')
           .attr('class','children-list')
@@ -273,8 +157,8 @@ export class FlowchartComponent implements OnInit {
         .attr('class', 'circle')
         .attr('id',id)
         .attr('type','circle')
-        .style('width', circleRadius + 'px')
-        .style('height', circleRadius + 'px')
+        .style('width', this.circleRadius + 'px')
+        .style('height', this.circleRadius + 'px')
         .style('top', top + 'px')
         .style('left', left + 'px')
   }
