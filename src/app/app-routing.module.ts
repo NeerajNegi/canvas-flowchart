@@ -1,3 +1,4 @@
+import { CanvasAnimationComponent } from './canvas-animation/canvas-animation.component';
 import { FlowchartCanvasComponent } from './flowchart-canvas/flowchart-canvas.component';
 import { FlowchartComponent } from './flowchart/flowchart.component';
 import { NgModule } from '@angular/core';
@@ -14,13 +15,17 @@ const routes: Routes = [
     component: FlowchartCanvasComponent
   },
   {
+    path: 'canvas-animation',
+    component: CanvasAnimationComponent
+  },
+  {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'canvas',
     pathMatch: 'full'
   }, 
   {
     path: '**',
-    redirectTo: 'home',
+    redirectTo: 'canvas',
     pathMatch: 'full'  
   }
 ];

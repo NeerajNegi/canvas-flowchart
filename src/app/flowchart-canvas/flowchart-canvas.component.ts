@@ -1,5 +1,5 @@
 import { DataLoaderService } from './../services/data-loader.service';
-import { Component, OnInit, ViewChild, ElementRef, NgZone } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef} from '@angular/core';
 
 @Component({
   selector: 'app-flowchart-canvas',
@@ -18,12 +18,15 @@ export class FlowchartCanvasComponent implements OnInit {
   reactangleWidth = 300;
   shapesOffset = 400;
 
-  constructor(private dataLoader: DataLoaderService, private ngZone: NgZone ) { }
+  constructor(private dataLoader: DataLoaderService) { }
 
   ngOnInit() {
     this.ctx = this.canvas.nativeElement.getContext('2d');
     this.ctx.canvas.width = window.innerWidth;
     this.ctx.canvas.height = window.innerHeight * 0.6;
+
+    this.ctx.fillStyle = '#d6d6d6';
+    this.ctx.fillRect(0,0, this.ctx.canvas.width,this.ctx.canvas.height);
 
     this.ctx.canvas.addEventListener('click', (event) => {
       console.log(event);
@@ -34,8 +37,6 @@ export class FlowchartCanvasComponent implements OnInit {
       this.data = res;
       this.draw(this.data.root, 25, this.ctx.canvas.height / 2 - this.rectangleHeight / 2);
     });
-
-    // this.ngZone.runOutsideAngular(() => this.animate());
   }
 
   private draw(node, x, y) {
@@ -60,38 +61,13 @@ export class FlowchartCanvasComponent implements OnInit {
   }
 
   private handleCanvasClick(x, y): void {
-
+    //handle canvas click event
   }
-
-  // private fillReactangles(): void {
-  //   for(let i=0;i<1000;i++) {
-  //     this.createRectangle();
-  //   }
-  // }
-
-  // private createRectangle(): void {
-  //   this.ctx.fillStyle = this.randomRGBA();
-
-  //   const x = Math.floor(Math.random() * (1200 - 0)) + 0;
-  //   const y = Math.floor(Math.random() * (500 - 0)) + 0;
-  //   const w = Math.floor(Math.random() * (50 - 10)) + 10;
-  //   const h = Math.floor(Math.random() * (80 - 10)) + 10;
-  //   this.ctx.fillRect(x, y, w, h);
-  // }
-
-  // private randomRGBA(): string {
-  //   var o = Math.round, r = Math.random, s = 255;
-  //   return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
-  // }
 
   private clearCanvas(): void {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
   }
 
-  // private animate(): void {
-  //   this.clearCanvas();
-  //   this.fillReactangles();
-  //   requestAnimationFrame(() => this.animate());
-  // }
+  
 
 }
