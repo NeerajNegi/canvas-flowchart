@@ -35,21 +35,43 @@ export class FlowchartCanvasComponent implements OnInit {
 
     this.dataLoader.getJSON().subscribe(res => {
       this.data = res;
-      this.draw(this.data.root, 25, this.ctx.canvas.height / 2 - this.rectangleHeight / 2);
+      this.draw(this.data.root, 500, this.ctx.canvas.height / 2 - this.rectangleHeight / 2);
       console.log(this.data);
     });
   }
 
+  // Drawing only in right direction
+  // private draw(node, x, y) {
+  //   this.createRectangle(node, x, y);
+  //   if(node.branches.length === 0) {
+  //     return;
+  //   }
+  //   const nodeHeight = node['bottomY'] - node['topY'];
+  //   this.createLine(node['bottomX'], node['topY'] + (nodeHeight / 2));
+  //   node.branches.forEach(branch => {
+  //     x = node['bottomX'] + this.shapesOffset;
+  //     y = node['topY'];
+  //     this.draw(branch.material, x, y);
+  //   });
+  // }
+
+  // Drawing in both left and right direction
   private draw(node, x, y) {
     this.createRectangle(node, x, y);
     if(node.branches.length === 0) {
       return;
     }
     const nodeHeight = node['bottomY'] - node['topY'];
-    this.createLine(node['bottomX'], node['topY'] + (nodeHeight / 2));
+    // this.createLine(node['bottomX'], node['topY'] + (nodeHeight / 2));
     node.branches.forEach(branch => {
-      x = node['bottomX'] + this.shapesOffset;
-      y = node['topY'];
+      if(branch.direction === 'right') {
+        x = node['bottomX'] + this.shapesOffset;
+        y = node['topY'];
+      }
+      if(branch.direction === 'left') {
+        x = node['topX'] - this.shapesOffset - this.reactangleWidth;
+        y = node['topY'];
+      }
       this.draw(branch.material, x, y);
     });
   }
@@ -60,6 +82,12 @@ export class FlowchartCanvasComponent implements OnInit {
     node['topY'] = y;
     node['bottomX'] = x + this.reactangleWidth;
     node['bottomY'] = y + this.rectangleHeight;
+
+    //Add text
+    this.ctx.font = '26px serif';
+    this.ctx.fillStyle = 'black';
+    this.ctx.fillText(node.id, node['topX'] + 10, node['topY'] + 30);
+
     // if(node['bottomX'] > this.ctx.canvas.width) {
     //   this.ctx.canvas.width = node['bottomX'] + 20;
     // }
