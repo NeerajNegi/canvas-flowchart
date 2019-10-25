@@ -30,7 +30,17 @@
                                 "id": "18-676405",
                                 "description": "Description rem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam...",
                                 "children": [],
-                                "branches": []
+                                "branches": [
+                                    {
+                                        "process": "LAZ-2019-12348",
+                                        "material": {
+                                            "id": "18-676406",
+                                            "description": "Description rem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam...",
+                                            "children": [],
+                                            "branches": []
+                                        }
+                                    }
+                                ]
                             }
                         }
                     ]

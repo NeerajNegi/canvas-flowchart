@@ -16,7 +16,7 @@ export class FlowchartCanvasComponent implements OnInit {
   // Shapes Dimensions
   rectangleHeight = 200;
   reactangleWidth = 300;
-  shapesOffset = 400;
+  shapesOffset = 100;
 
   constructor(private dataLoader: DataLoaderService) { }
 
@@ -36,6 +36,7 @@ export class FlowchartCanvasComponent implements OnInit {
     this.dataLoader.getNewJSON().subscribe(res => {
       this.data = res;
       this.draw(this.data.root, 25, this.ctx.canvas.height / 2 - this.rectangleHeight / 2);
+      console.log(this.data);
     });
   }
 
@@ -44,8 +45,10 @@ export class FlowchartCanvasComponent implements OnInit {
     if(node.branches.length === 0) {
       return;
     }
+    const nodeHeight = node['bottomY'] - node['topY'];
+    this.createLine(node['bottomX'], node['topY'] + (nodeHeight / 2));
     node.branches.forEach(branch => {
-      x = node['topX'] + this.shapesOffset;
+      x = node['bottomX'] + this.shapesOffset;
       y = node['topY'];
       this.draw(branch.material, x, y);
     });
@@ -57,7 +60,16 @@ export class FlowchartCanvasComponent implements OnInit {
     node['topY'] = y;
     node['bottomX'] = x + this.reactangleWidth;
     node['bottomY'] = y + this.rectangleHeight;
-    console.log(node);
+    // if(node['bottomX'] > this.ctx.canvas.width) {
+    //   this.ctx.canvas.width = node['bottomX'] + 20;
+    // }
+  }
+
+  private createLine(fromX, fromY): void {
+    this.ctx.beginPath();
+    this.ctx.moveTo(fromX, fromY);
+    this.ctx.lineTo(fromX + this.shapesOffset, fromY);
+    this.ctx.stroke();
   }
 
   private handleCanvasClick(x, y): void {
