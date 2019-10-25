@@ -33,7 +33,7 @@ export class FlowchartCanvasComponent implements OnInit {
       this.handleCanvasClick(event.clientX, event.clientY);
     })
 
-    this.dataLoader.getNewJSON().subscribe(res => {
+    this.dataLoader.getJSON().subscribe(res => {
       this.data = res;
       this.draw(this.data.root, 25, this.ctx.canvas.height / 2 - this.rectangleHeight / 2);
       console.log(this.data);
@@ -74,6 +74,7 @@ export class FlowchartCanvasComponent implements OnInit {
 
   private handleCanvasClick(x, y): void {
     //handle canvas click event
+    console.log({x,y});
   }
 
   private clearCanvas(): void {

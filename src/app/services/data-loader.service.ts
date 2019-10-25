@@ -7,13 +7,11 @@ import { HttpClient } from '@angular/common/http';
 })
 export class DataLoaderService {
 
+  filePath: string = '../../assets/new-data.json';
+
   constructor(private http: HttpClient) { }
 
   public getJSON(): Observable<any> {
-    return this.http.get('../../assets/data.json');
-  }
-
-  public getNewJSON(): Observable<any> {
-    return this.http.get('../../assets/new-data.json');
+    return this.http.get(this.filePath);
   }
 }
