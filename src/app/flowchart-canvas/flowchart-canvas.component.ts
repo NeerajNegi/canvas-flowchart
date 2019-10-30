@@ -9,9 +9,11 @@ import { Component, OnInit, ViewChild, ElementRef} from '@angular/core';
 export class FlowchartCanvasComponent implements OnInit {
 
   @ViewChild('canvas', {static: true}) canvas: ElementRef<HTMLCanvasElement>;
+  @ViewChild('canvasWrapper', {static: true}) canvasWrapper: ElementRef<HTMLDivElement>;
 
   private ctx: CanvasRenderingContext2D;
   data: any;
+  materialClicked: any;
 
   // Shapes Dimensions
   rectangleHeight = 200;
@@ -52,7 +54,7 @@ export class FlowchartCanvasComponent implements OnInit {
         x = node['bottomX'] + this.shapesOffset;
         y = node['topY'];
 
-        this.createCircle(node['bottomX'], nodeHeight/2 + node['topY'], branch.direction)
+        this.createCircle(node['bottomX'], nodeHeight/2 + node['topY'], branch.direction, branch.process)
 
         this.createLine(node['bottomX'], nodeHeight/2 + node['topY'], node['bottomX'] + (this.shapesOffset / 2) - this.circleRadius, nodeHeight/2 + node['topY']);
         this.createLine(node['bottomX'] + (this.shapesOffset / 2) + this.circleRadius, nodeHeight/2 + node['topY'], node['bottomX'] + this.shapesOffset, nodeHeight/2 + node['topY']);
@@ -60,8 +62,8 @@ export class FlowchartCanvasComponent implements OnInit {
       if(branch.direction === 'left') {
         x = node['topX'] - this.shapesOffset - this.reactangleWidth;
         y = node['topY'];
-        
-        this.createCircle(node['topX'], nodeHeight/2 + node['topY'], branch.direction)
+
+        this.createCircle(node['topX'], nodeHeight/2 + node['topY'], branch.direction, branch.process)
 
         this.createLine(node['topX'], nodeHeight/2 + node['topY'], node['topX'] - (this.shapesOffset / 2) + this.circleRadius, nodeHeight/2 + node['topY']);
         this.createLine(node['topX'] - (this.shapesOffset / 2) - this.circleRadius, nodeHeight/2 + node['topY'], node['topX'] - this.shapesOffset, nodeHeight/2 + node['topY']);
@@ -80,6 +82,7 @@ export class FlowchartCanvasComponent implements OnInit {
     node['bottomY'] = y + this.rectangleHeight;
 
     this.createText(node.id, node['topX'] + 10, node['topY'] + 30);
+    // this.createText(node.description, node['topX'] + 10, node['topY'] + 50);
   }
 
   private createText(text, x, y, font = '', fillColor = ''): void {
@@ -95,7 +98,7 @@ export class FlowchartCanvasComponent implements OnInit {
     this.ctx.stroke();
   }
 
-  private createCircle(fromX, y, direction): void {
+  private createCircle(fromX, y, direction, text): void {
     let x;
     if(direction === 'right') {
       x = fromX + this.shapesOffset / 2;
@@ -106,33 +109,42 @@ export class FlowchartCanvasComponent implements OnInit {
     this.ctx.beginPath();
     this.ctx.arc(x,y,radius,0,Math.PI*2);
     this.ctx.stroke();
+    this.createText(text, x - text.length * 3, y + 6, '12px serif');
   }
 
   private handleCanvasClick(x, y): void {
-    console.log({x,y});
-    // console.log(this.findMaterialClicked(this.data.root, x, y));
+    this.materialClicked = null;
+    // console.log({x: this.canvasWrapper.nativeElement.scrollLeft + x, y: this.canvasWrapper.nativeElement.scrollTop + y});
+    this.findMaterialClicked([{material: this.data.root}], this.canvasWrapper.nativeElement.scrollLeft + x, this.canvasWrapper.nativeElement.scrollTop + y)
+    console.log('Material Clicked', this.materialClicked);
   }
 
   private clearCanvas(): void {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
   }
 
-  // private findMaterialClicked(node, x, y): any {
-  //   if(x >= node['topX'] && x <= node['bottomX'] && y >= node['topY'] && y <= node['bottomY']) {
-  //     return node;
-  //   }
-  //   if(node.branches.length > 0) {
-  //     node.branches.forEach(branch => {
-  //       if(branch.material.branches.length > 0) {
-  //         return this.findMaterialClicked(branch.material,x , y);
-  //       } else {
-  //         if(x >= branch.material['topX'] && x <= branch.material['bottomX'] && y >= branch.material['topY'] && y <= branch.material['bottomY']) {
-  //           return branch.material;
-  //         }
-  //       }
-  //     })
-  //   }
-  // }
+  //@TODO
+  //Find more optimized approach to search material.
+  private findMaterialClicked(branches, x, y): any {
+    branches.forEach(branch => {
+      // console.log(branch);
+      if(this.compareClickWithNode(branch.material, x, y)) {
+        // console.log('FOUND', branch.material)
+        this.materialClicked = branch.material;
+      } else {
+        if(branch.material.branches.length > 0) {
+          return this.findMaterialClicked(branch.material.branches, x, y);
+        }
+      }
+    })
+  }
+
+  private compareClickWithNode(node, x, y): boolean {
+    if(x >= node['topX'] && x <= node['bottomX'] && y >= node['topY'] && y <= node['bottomY']) {
+      return true;
+    }
+    return false;
+  }
 
   // Drawing only in right direction
   // private draw(node, x, y) {
