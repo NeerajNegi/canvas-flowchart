@@ -16,6 +16,7 @@ export class FlowchartCanvasComponent implements OnInit {
   private ctx: CanvasRenderingContext2D;
   data: any;
   materialClicked: any;
+  selectedChildren: Array<any> = [];
 
   // Shapes Dimensions
   rectangleHeight = 200;
@@ -114,7 +115,6 @@ export class FlowchartCanvasComponent implements OnInit {
   private handleCanvasClick(x, y): void {
     this.materialClicked = null;
     this.findMaterialClicked([{material: this.data.root}], this.canvasWrapper.nativeElement.scrollLeft + x, this.canvasWrapper.nativeElement.scrollTop + y)
-    const p = document.createElement('p');
 
     if(this.materialClicked !== null) {
       this.appendChildrenList(this.materialClicked);
@@ -122,30 +122,42 @@ export class FlowchartCanvasComponent implements OnInit {
   }
 
   private appendChildrenList(node): void {
+    this.selectedChildren = [];
     
     while(this.childrenList.nativeElement.firstChild) {
       this.childrenList.nativeElement.removeChild(this.childrenList.nativeElement.firstChild)
     }
 
     node.children.forEach(child => {
-      this.childrenList.nativeElement.appendChild(this.createChildrenListItem(child.id));
+      this.childrenList.nativeElement.appendChild(this.createChildrenListItem(child));
     })
+
     this.childrenListWrapper.nativeElement.style.top = this.materialClicked['topY'] + 'px';
     this.childrenListWrapper.nativeElement.style.left = this.materialClicked['bottomX'] + 5 + 'px';
     this.childrenListWrapper.nativeElement.style.display = 'block';
   }
 
-  private createChildrenListItem(value): HTMLLIElement {
+  private createChildrenListItem(node): HTMLLIElement {
     const li = document.createElement('li');
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.name = 'children';
-    checkbox.value = value;
-    checkbox.id = value;
+    checkbox.value = node.id;
+    checkbox.id = node.id;
 
     const label = document.createElement('label');
-    label.htmlFor = value;
-    label.appendChild(document.createTextNode(value));
+    label.htmlFor = node.id;
+    label.appendChild(document.createTextNode(node.id));
+
+    checkbox.addEventListener('change', (event: any) => {
+      if(event.target.checked) {
+        this.selectedChildren.push(node);
+      } else {
+        const filteredChildren = this.selectedChildren.filter(child => child.id !== node.id);
+        this.selectedChildren = [ ... filteredChildren ];
+      }
+      console.log(this.selectedChildren);
+    })
 
     li.appendChild(checkbox);
     li.appendChild(label);
