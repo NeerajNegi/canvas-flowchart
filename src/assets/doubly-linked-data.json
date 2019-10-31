@@ -4,13 +4,13 @@
         "description": "description rem ipsum dolor sit amet, consecteture adipiscing elit, sed",
         "children": [
             {
-                "id": "18-676404-1",
+                "id": "1-1",
                 "description": "First child",
                 "children": [],
                 "branches": []
             },
             {
-                "id": "18-676404-2",
+                "id": "1-2",
                 "description": "Second child",
                 "children": [],
                 "branches": []
@@ -23,7 +23,20 @@
                 "material": {
                     "id": "2",
                     "description": "Description rem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam...",
-                    "children": [],
+                    "children": [
+                        {
+                            "id": "2-1",
+                            "description": "First child",
+                            "children": [],
+                            "branches": []
+                        },
+                        {
+                            "id": "2-2",
+                            "description": "Second child",
+                            "children": [],
+                            "branches": []
+                        }
+                    ],
                     "branches": []
                 }
             },
@@ -33,7 +46,20 @@
                 "material": {
                     "id": "3",
                     "description": "Description rem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam...",
-                    "children": [],
+                    "children": [
+                        {
+                            "id": "3-1",
+                            "description": "First child",
+                            "children": [],
+                            "branches": []
+                        },
+                        {
+                            "id": "3-2",
+                            "description": "Second child",
+                            "children": [],
+                            "branches": []
+                        }
+                    ],
                     "branches": [
                         {
                             "process": "LAZ-2019-12348",
@@ -41,7 +67,20 @@
                             "material": {
                                 "id": "4",
                                 "description": "Description rem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam...",
-                                "children": [],
+                                "children": [
+                                    {
+                                        "id": "4-1",
+                                        "description": "First child",
+                                        "children": [],
+                                        "branches": []
+                                    },
+                                    {
+                                        "id": "4-2",
+                                        "description": "Second child",
+                                        "children": [],
+                                        "branches": []
+                                    }
+                                ],
                                 "branches": []
                             }
                         }

@@ -1,4 +1,53 @@
 .canvas-wrapper {
     width: 100%;
     overflow: auto;
+    position: relative;
+}
+
+.children-list-wrapper {
+    display: none;
+    position: absolute;
+    width: 250px;
+    background: #585858;
+
+    .header {
+        background: #444444;
+        color: #b5b5b5;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .children-list {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    ::ng-deep label {
+        margin-left: 10px;
+    }
+
+    ::ng-deep input {
+        margin-left: 10px;
+    }
+
+    ul {
+        list-style: none;
+        color: white;
+    }
+
+    .footer {
+        height: 50px;
+        background: #444444;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    .btn {
+        width: 100px;
+        height: 20px;
+        border-radius: 10px;
+    }
 }

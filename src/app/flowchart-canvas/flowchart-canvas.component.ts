@@ -1,5 +1,5 @@
 import { DataLoaderService } from './../services/data-loader.service';
-import { Component, OnInit, ViewChild, ElementRef} from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input} from '@angular/core';
 
 @Component({
   selector: 'app-flowchart-canvas',
@@ -10,6 +10,8 @@ export class FlowchartCanvasComponent implements OnInit {
 
   @ViewChild('canvas', {static: true}) canvas: ElementRef<HTMLCanvasElement>;
   @ViewChild('canvasWrapper', {static: true}) canvasWrapper: ElementRef<HTMLDivElement>;
+  @ViewChild('childrenListWrapper', {static: true}) childrenListWrapper: ElementRef<HTMLDivElement>;
+  @ViewChild('childrenList', {static: true}) childrenList: ElementRef<HTMLUListElement>;
 
   private ctx: CanvasRenderingContext2D;
   data: any;
@@ -72,8 +74,6 @@ export class FlowchartCanvasComponent implements OnInit {
     });
   }
 
-  
-
   private createRectangle(node, x, y): void {
     this.ctx.strokeRect(x, y, this.reactangleWidth, this.rectangleHeight);
     node['topX'] = x;
@@ -82,7 +82,6 @@ export class FlowchartCanvasComponent implements OnInit {
     node['bottomY'] = y + this.rectangleHeight;
 
     this.createText(node.id, node['topX'] + 10, node['topY'] + 30);
-    // this.createText(node.description, node['topX'] + 10, node['topY'] + 50);
   }
 
   private createText(text, x, y, font = '', fillColor = ''): void {
@@ -114,9 +113,47 @@ export class FlowchartCanvasComponent implements OnInit {
 
   private handleCanvasClick(x, y): void {
     this.materialClicked = null;
-    // console.log({x: this.canvasWrapper.nativeElement.scrollLeft + x, y: this.canvasWrapper.nativeElement.scrollTop + y});
     this.findMaterialClicked([{material: this.data.root}], this.canvasWrapper.nativeElement.scrollLeft + x, this.canvasWrapper.nativeElement.scrollTop + y)
-    console.log('Material Clicked', this.materialClicked);
+    const p = document.createElement('p');
+
+    if(this.materialClicked !== null) {
+      this.appendChildrenList(this.materialClicked);
+    }
+  }
+
+  private appendChildrenList(node): void {
+    
+    while(this.childrenList.nativeElement.firstChild) {
+      this.childrenList.nativeElement.removeChild(this.childrenList.nativeElement.firstChild)
+    }
+
+    node.children.forEach(child => {
+      this.childrenList.nativeElement.appendChild(this.createChildrenListItem(child.id));
+    })
+    this.childrenListWrapper.nativeElement.style.top = this.materialClicked['topY'] + 'px';
+    this.childrenListWrapper.nativeElement.style.left = this.materialClicked['bottomX'] + 5 + 'px';
+    this.childrenListWrapper.nativeElement.style.display = 'block';
+  }
+
+  private createChildrenListItem(value): HTMLLIElement {
+    const li = document.createElement('li');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.name = 'children';
+    checkbox.value = value;
+    checkbox.id = value;
+
+    const label = document.createElement('label');
+    label.htmlFor = value;
+    label.appendChild(document.createTextNode(value));
+
+    li.appendChild(checkbox);
+    li.appendChild(label);
+    return li;
+  }
+
+  public hideSelectionsMenu(): void {
+    this.childrenListWrapper.nativeElement.style.display = 'none';
   }
 
   private clearCanvas(): void {
@@ -124,7 +161,7 @@ export class FlowchartCanvasComponent implements OnInit {
   }
 
   //@TODO
-  //Find more optimized approach to search material.
+  //Find more optimized and better approach to search material.
   private findMaterialClicked(branches, x, y): any {
     branches.forEach(branch => {
       // console.log(branch);
@@ -145,19 +182,4 @@ export class FlowchartCanvasComponent implements OnInit {
     }
     return false;
   }
-
-  // Drawing only in right direction
-  // private draw(node, x, y) {
-  //   this.createRectangle(node, x, y);
-  //   if(node.branches.length === 0) {
-  //     return;
-  //   }
-  //   const nodeHeight = node['bottomY'] - node['topY'];
-  //   this.createLine(node['bottomX'], node['topY'] + (nodeHeight / 2));
-  //   node.branches.forEach(branch => {
-  //     x = node['bottomX'] + this.shapesOffset;
-  //     y = node['topY'];
-  //     this.draw(branch.material, x, y);
-  //   });
-  // }  
 }
