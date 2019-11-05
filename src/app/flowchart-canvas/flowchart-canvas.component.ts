@@ -39,9 +39,10 @@ export class FlowchartCanvasComponent implements OnInit {
     })
 
     this.dataLoader.getJSON().subscribe(res => {
-      this.data = res;
+      this.data = this.transformData(res[12]);
       this.draw(this.data.root, this.ctx.canvas.width / 2, this.ctx.canvas.height / 2 - this.rectangleHeight / 2);
-      console.log(this.data);
+      this.canvasWrapper.nativeElement.scrollTo(this.data.root.topX - 500, 0);
+      // console.log(this.data);
     });
   }
 
@@ -123,7 +124,7 @@ export class FlowchartCanvasComponent implements OnInit {
 
   private appendChildrenList(node): void {
     this.selectedChildren = [];
-    
+
     while(this.childrenList.nativeElement.firstChild) {
       this.childrenList.nativeElement.removeChild(this.childrenList.nativeElement.firstChild)
     }
@@ -194,4 +195,68 @@ export class FlowchartCanvasComponent implements OnInit {
     }
     return false;
   }
+
+  private transformData(data: any): any {
+    let res = {};
+    res['root'] = {
+      id: data.MIDAS_NUMBER,
+      description: data.MIDAS_SAMPLE_DESCRIPTION,
+      children: [],
+      branches: []
+    }
+
+    data['GENEALOGY'].forEach((element: any) => {
+      // res['root']['branches'].push({
+      //   process: element['CHILD_PROCESS_ID'],
+      //   direction: "right",
+      //   material: {
+      //     id: element['CHILD_MIDAS_NUMBER'],
+      //     description: '',
+      //     children: [],
+      //     branches: []
+      //   }
+      // })
+      Object.keys(element).forEach((key: string) => {
+        if(key.includes('MIDAS_NUMBER')) {
+          if(key.includes('GRAND_PARENT')) {
+            res['root'].branches.push({
+              process: element['GRAND_PARENT_PROCESS_ID'],
+              direction: "left",
+              material: {
+                id: element['GRAND_PARENT_MIDAS_NUMBER'],
+                description: '',
+                children: [],
+                branches: []
+              }
+            })
+          } else if(key.includes('PARENT')) {
+            res['root'].branches.push({
+              process: element['PARENT_PROCESS_ID'],
+              direction: "left",
+              material: {
+                id: element['PARENT_MIDAS_NUMBER'],
+                description: '',
+                children: [],
+                branches: []
+              }
+            })
+          } else if(key.includes('CHILD')) {
+            res['root'].branches.push({
+              process: element['CHILD_PROCESS_ID'],
+              direction: "right",
+              material: {
+                id: element['CHILD_MIDAS_NUMBER'],
+                description: '',
+                children: [],
+                branches: []
+              }
+            })
+          }
+        }
+      })
+    })
+
+    return res;
+  }
+
 }

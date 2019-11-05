@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class DataLoaderService {
 
-  filePath: string = '../../assets/doubly-linked-data.json';
+  filePath: string = '../../assets/Genealogy.json';
 
   constructor(private http: HttpClient) { }
 
