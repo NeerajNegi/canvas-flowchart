@@ -39,10 +39,10 @@ export class FlowchartCanvasComponent implements OnInit {
     })
 
     this.dataLoader.getJSON().subscribe(res => {
-      this.data = this.transformData(res[12]);
+      this.data = this.transformData(res[7]);
       this.draw(this.data.root, this.ctx.canvas.width / 2, this.ctx.canvas.height / 2 - this.rectangleHeight / 2);
       this.canvasWrapper.nativeElement.scrollTo(this.data.root.topX - 500, 0);
-      // console.log(this.data);
+      console.log(this.data);
     });
   }
 
@@ -53,6 +53,7 @@ export class FlowchartCanvasComponent implements OnInit {
       return;
     }
     const nodeHeight = node['bottomY'] - node['topY'];
+    const nodeWidth = node['bottomX'] - node['topX']
     node.branches.forEach(branch => {
       if(branch.direction === 'right') {
         x = node['bottomX'] + this.shapesOffset;
@@ -60,17 +61,30 @@ export class FlowchartCanvasComponent implements OnInit {
 
         this.createCircle(node['bottomX'], nodeHeight/2 + node['topY'], branch.direction, branch.process)
 
-        this.createLine(node['bottomX'], nodeHeight/2 + node['topY'], node['bottomX'] + (this.shapesOffset / 2) - this.circleRadius, nodeHeight/2 + node['topY']);
-        this.createLine(node['bottomX'] + (this.shapesOffset / 2) + this.circleRadius, nodeHeight/2 + node['topY'], node['bottomX'] + this.shapesOffset, nodeHeight/2 + node['topY']);
+        if(node.rightBranchesCount === 0){
+          this.createLine(node['bottomX'], nodeHeight/2 + node['topY'], node['bottomX'] + (this.shapesOffset / 2) - this.circleRadius, nodeHeight/2 + node['topY']);
+          this.createLine(node['bottomX'] + (this.shapesOffset / 2) + this.circleRadius, nodeHeight/2 + node['topY'], node['bottomX'] + this.shapesOffset, nodeHeight/2 + node['topY']);
+          node.rightBranchesCount++;
+        } else if(branch.rightBranchesCount === 1) {
+          this.createLine(node['topX'] + nodeWidth / 2, node['topY'], node['topX'] + nodeWidth / 2, node['topY'] - this.shapesOffset / 3);
+          node.rightBranchesCount++;
+        }
       }
       if(branch.direction === 'left') {
+        console.log(branch);
         x = node['topX'] - this.shapesOffset - this.reactangleWidth;
         y = node['topY'];
 
         this.createCircle(node['topX'], nodeHeight/2 + node['topY'], branch.direction, branch.process)
 
-        this.createLine(node['topX'], nodeHeight/2 + node['topY'], node['topX'] - (this.shapesOffset / 2) + this.circleRadius, nodeHeight/2 + node['topY']);
-        this.createLine(node['topX'] - (this.shapesOffset / 2) - this.circleRadius, nodeHeight/2 + node['topY'], node['topX'] - this.shapesOffset, nodeHeight/2 + node['topY']);
+        if(node.leftBranchesCount === 0){
+          this.createLine(node['topX'], nodeHeight/2 + node['topY'], node['topX'] - (this.shapesOffset / 2) + this.circleRadius, nodeHeight/2 + node['topY']);
+          this.createLine(node['topX'] - (this.shapesOffset / 2) - this.circleRadius, nodeHeight/2 + node['topY'], node['topX'] - this.shapesOffset, nodeHeight/2 + node['topY']);
+          node.leftBranchesCount++;
+        } else if(node.leftBranchesCount === 1) {
+          this.createLine(node['topX'] + nodeWidth / 2, node['topY'], node['topX'] + nodeWidth / 2, node['topY'] - this.shapesOffset / 3);
+          node.leftBranchesCount++;
+        }
       }
       this.draw(branch.material, x, y);
     });
@@ -118,6 +132,7 @@ export class FlowchartCanvasComponent implements OnInit {
     this.findMaterialClicked([{material: this.data.root}], this.canvasWrapper.nativeElement.scrollLeft + x, this.canvasWrapper.nativeElement.scrollTop + y)
 
     if(this.materialClicked !== null) {
+      console.log(this.materialClicked);
       this.appendChildrenList(this.materialClicked);
     }
   }
@@ -155,7 +170,7 @@ export class FlowchartCanvasComponent implements OnInit {
         this.selectedChildren.push(node);
       } else {
         const filteredChildren = this.selectedChildren.filter(child => child.id !== node.id);
-        this.selectedChildren = [ ... filteredChildren ];
+        this.selectedChildren = [ ...filteredChildren ];
       }
       console.log(this.selectedChildren);
     })
@@ -202,61 +217,48 @@ export class FlowchartCanvasComponent implements OnInit {
       id: data.MIDAS_NUMBER,
       description: data.MIDAS_SAMPLE_DESCRIPTION,
       children: [],
-      branches: []
+      branches: [],
+      leftBranchesCount: 0,
+      rightBranchesCount: 0
     }
 
     data['GENEALOGY'].forEach((element: any) => {
-      // res['root']['branches'].push({
-      //   process: element['CHILD_PROCESS_ID'],
-      //   direction: "right",
-      //   material: {
-      //     id: element['CHILD_MIDAS_NUMBER'],
-      //     description: '',
-      //     children: [],
-      //     branches: []
-      //   }
-      // })
+      let grandParent = null;
       Object.keys(element).forEach((key: string) => {
         if(key.includes('MIDAS_NUMBER')) {
           if(key.includes('GRAND_PARENT')) {
-            res['root'].branches.push({
-              process: element['GRAND_PARENT_PROCESS_ID'],
-              direction: "left",
-              material: {
-                id: element['GRAND_PARENT_MIDAS_NUMBER'],
-                description: '',
-                children: [],
-                branches: []
-              }
-            })
+            grandParent = this.createNode(element['GRAND_PARENT_PROCESS_ID'], 'left', element['GRAND_PARENT_MIDAS_NUMBER']);
           } else if(key.includes('PARENT')) {
-            res['root'].branches.push({
-              process: element['PARENT_PROCESS_ID'],
-              direction: "left",
-              material: {
-                id: element['PARENT_MIDAS_NUMBER'],
-                description: '',
-                children: [],
-                branches: []
-              }
-            })
+            res['root'].branches.push( this.createNode(element['PARENT_PROCESS_ID'], 'left', element['PARENT_MIDAS_NUMBER']))
+            // res['root']['leftBranchesCount']++;
+            if(grandParent !== null) {
+              res['root'].branches[res['root'].branches.length - 1].material.branches.push(grandParent);
+              res['root'].branches[res['root'].branches.length - 1].material['leftBranchesCount']++;
+            }
           } else if(key.includes('CHILD')) {
-            res['root'].branches.push({
-              process: element['CHILD_PROCESS_ID'],
-              direction: "right",
-              material: {
-                id: element['CHILD_MIDAS_NUMBER'],
-                description: '',
-                children: [],
-                branches: []
-              }
-            })
+            res['root'].branches.push(this.createNode(element['CHILD_PROCESS_ID'], 'right', element['CHILD_MIDAS_NUMBER']))
+            // res['root']['rightBranchesCount']++;
           }
         }
       })
     })
 
     return res;
+  }
+
+  private createNode(process, direction, id): any {
+    return {
+      process,
+      direction,
+      material: {
+        id,
+        description: '',
+        children: [],
+        branches: [],
+        leftBranchesCount: 0,
+        rightBranchesCount: 0
+      }
+    }
   }
 
 }
