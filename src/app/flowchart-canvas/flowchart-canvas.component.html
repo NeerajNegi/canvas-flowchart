@@ -1,12 +1,12 @@
 <div class="canvas-wrapper" #canvasWrapper>
     <canvas #canvas></canvas>
     <div class="children-list-wrapper" #childrenListWrapper>
-        <div class="header">Maximum 3 selection</div>
+        <div class="header">Maximum 2 selection</div>
         <ul class="children-list" #childrenList>
         </ul>
         <div class="footer">
             <button class="btn" (click)="hideSelectionsMenu()">Cancel</button>
-            <button class="btn">Show selections</button>
+            <button class="btn" (click)="showSelections()">Show selections</button>
         </div>
     </div>
 </div>

@@ -87,6 +87,7 @@ export class FlowchartCanvasComponent implements OnInit {
       }
       if(branch.direction === 'left') {
         if(node.leftBranchesCount === 0){
+          //draw below the node
           x = node['topX'] - this.shapesOffset - this.reactangleWidth;
           y = node['bottomY'] + this.shapesOffset / 3 - this.rectangleHeight / 2;
 
@@ -102,6 +103,7 @@ export class FlowchartCanvasComponent implements OnInit {
 
           node.leftBranchesCount++;
         } else if(node.leftBranchesCount === 1) {
+          //draw above the node
           x = node['topX'] - this.shapesOffset - this.reactangleWidth;
           y = node['topY'] - this.shapesOffset / 3 - this.rectangleHeight / 2;
 
@@ -160,19 +162,21 @@ export class FlowchartCanvasComponent implements OnInit {
 
     if(this.materialClicked !== null) {
       console.log(this.materialClicked);
-      this.appendChildrenList(this.materialClicked);
+      this.appendChildrenList(this.materialClicked, 'right');
     }
   }
 
-  private appendChildrenList(node): void {
+  private appendChildrenList(node, direction): void {
     this.selectedChildren = [];
 
     while(this.childrenList.nativeElement.firstChild) {
       this.childrenList.nativeElement.removeChild(this.childrenList.nativeElement.firstChild)
     }
 
-    node.children.forEach(child => {
-      this.childrenList.nativeElement.appendChild(this.createChildrenListItem(child));
+    node.branches.forEach(child => {
+      if(child.direction === direction) {
+        this.childrenList.nativeElement.appendChild(this.createChildrenListItem(child));
+      }
     })
 
     this.childrenListWrapper.nativeElement.style.top = this.materialClicked['topY'] + 'px';
@@ -185,18 +189,18 @@ export class FlowchartCanvasComponent implements OnInit {
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.name = 'children';
-    checkbox.value = node.id;
-    checkbox.id = node.id;
+    checkbox.value = node['material']['id'];
+    checkbox.id = node['material']['id'];
 
     const label = document.createElement('label');
-    label.htmlFor = node.id;
-    label.appendChild(document.createTextNode(node.id));
+    label.htmlFor = node['material']['id'];
+    label.appendChild(document.createTextNode(node['material']['id']));
 
     checkbox.addEventListener('change', (event: any) => {
       if(event.target.checked) {
         this.selectedChildren.push(node);
       } else {
-        const filteredChildren = this.selectedChildren.filter(child => child.id !== node.id);
+        const filteredChildren = this.selectedChildren.filter(child => child.id !== node['material']['id']);
         this.selectedChildren = [ ...filteredChildren ];
       }
       console.log(this.selectedChildren);
@@ -209,6 +213,14 @@ export class FlowchartCanvasComponent implements OnInit {
 
   public hideSelectionsMenu(): void {
     this.childrenListWrapper.nativeElement.style.display = 'none';
+  }
+
+  private showSelections(): void {
+    // this.materialClicked.branches.pop();
+    // this.materialClicked.branches.pop();
+    this.hideSelectionsMenu();
+    // this.clearCanvas();
+    // this.draw(this.data.root, this.ctx.canvas.width / 2, this.ctx.canvas.height / 2 - this.rectangleHeight / 2);
   }
 
   private clearCanvas(): void {
