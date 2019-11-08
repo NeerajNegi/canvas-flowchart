@@ -85,7 +85,7 @@ export class FlowchartCanvasComponent implements OnInit {
           //draw below the node
           x = node['topX'] - this.shapesOffset - this.reactangleWidth;
           y = node['bottomY'] + this.shapesOffset / 3 - this.rectangleHeight / 2;
-          
+
           this.createLine(node['topX'] + nodeWidth / 2, node['bottomY'], node['topX'] + nodeWidth / 2, node['bottomY'] + this.shapesOffset / 3);
           this.createLine(node['topX'] + nodeWidth / 2, node['bottomY'] + this.shapesOffset / 3, node['topX'] - (this.shapesOffset / 2) + this.circleRadius, node['bottomY'] + this.shapesOffset / 3);
           this.createCircle(node['topX'], node['bottomY'] + this.shapesOffset / 3, branch.direction, branch.process);
@@ -151,7 +151,6 @@ export class FlowchartCanvasComponent implements OnInit {
     this.findMaterialClicked([{material: this.data.root}], this.canvasWrapper.nativeElement.scrollLeft + x, this.canvasWrapper.nativeElement.scrollTop + y)
 
     if(this.materialClicked !== null) {
-      console.log(this.materialClicked);
       this.appendChildrenList(this.materialClicked, 'right');
     }
   }
@@ -206,11 +205,7 @@ export class FlowchartCanvasComponent implements OnInit {
   }
 
   private showSelections(): void {
-    // this.materialClicked.branches.pop();
-    // this.materialClicked.branches.pop();
     this.hideSelectionsMenu();
-    // this.clearCanvas();
-    // this.draw(this.data.root, this.ctx.canvas.width / 2, this.ctx.canvas.height / 2 - this.rectangleHeight / 2);
   }
 
   private clearCanvas(): void {
@@ -221,9 +216,7 @@ export class FlowchartCanvasComponent implements OnInit {
   //Find more optimized and better approach to search material.
   private findMaterialClicked(branches, x, y): any {
     branches.forEach(branch => {
-      // console.log(branch);
       if(this.compareClickWithNode(branch.material, x, y)) {
-        // console.log('FOUND', branch.material)
         this.materialClicked = branch.material;
       } else {
         if(branch.material.branches.length > 0) {
@@ -259,14 +252,12 @@ export class FlowchartCanvasComponent implements OnInit {
             grandParent = this.createNode(element['GRAND_PARENT_PROCESS_ID'], 'left', element['GRAND_PARENT_MIDAS_NUMBER']);
           } else if(key.includes('PARENT')) {
             res['root'].branches.push( this.createNode(element['PARENT_PROCESS_ID'], 'left', element['PARENT_MIDAS_NUMBER']))
-            // res['root']['leftBranchesCount']++;
             if(grandParent !== null) {
               res['root'].branches[res['root'].branches.length - 1].material.branches.push(grandParent);
               res['root'].branches[res['root'].branches.length - 1].material['leftBranchesCount']++;
             }
           } else if(key.includes('CHILD')) {
             res['root'].branches.push(this.createNode(element['CHILD_PROCESS_ID'], 'right', element['CHILD_MIDAS_NUMBER']))
-            // res['root']['rightBranchesCount']++;
           }
         }
       })
