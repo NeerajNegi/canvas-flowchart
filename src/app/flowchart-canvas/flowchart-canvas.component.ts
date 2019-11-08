@@ -60,12 +60,7 @@ export class FlowchartCanvasComponent implements OnInit {
           //draw below the node
           x = node['bottomX'] + this.shapesOffset;
           y = node['bottomY'] + this.shapesOffset / 3 - this.rectangleHeight / 2;
-
-          // Create straight line from center
-          // this.createLine(node['topX'], nodeHeight/2 + node['topY'], node['topX'] - (this.shapesOffset / 2) + this.circleRadius, nodeHeight/2 + node['topY']);
-          // this.createLine(node['topX'] - (this.shapesOffset / 2) - this.circleRadius, nodeHeight/2 + node['topY'], node['topX'] - this.shapesOffset, nodeHeight/2 + node['topY']);
-          // this.createCircle(node['topX'], nodeHeight/2 + node['topY'], branch.direction, branch.process)
-
+          
           this.createLine(node['bottomX'] - nodeWidth / 2, node['bottomY'], node['bottomX'] - nodeWidth / 2, node['bottomY'] + this.shapesOffset / 3);
           this.createLine(node['bottomX'] - nodeWidth / 2, node['bottomY'] + this.shapesOffset / 3, node['bottomX'] + (this.shapesOffset / 2) - this.circleRadius, node['bottomY'] + this.shapesOffset / 3);
           this.createCircle(node['bottomX'], node['bottomY'] + this.shapesOffset / 3, branch.direction, branch.process);
@@ -90,12 +85,7 @@ export class FlowchartCanvasComponent implements OnInit {
           //draw below the node
           x = node['topX'] - this.shapesOffset - this.reactangleWidth;
           y = node['bottomY'] + this.shapesOffset / 3 - this.rectangleHeight / 2;
-
-          // Create straight line from center
-          // this.createLine(node['topX'], nodeHeight/2 + node['topY'], node['topX'] - (this.shapesOffset / 2) + this.circleRadius, nodeHeight/2 + node['topY']);
-          // this.createLine(node['topX'] - (this.shapesOffset / 2) - this.circleRadius, nodeHeight/2 + node['topY'], node['topX'] - this.shapesOffset, nodeHeight/2 + node['topY']);
-          // this.createCircle(node['topX'], nodeHeight/2 + node['topY'], branch.direction, branch.process)
-
+          
           this.createLine(node['topX'] + nodeWidth / 2, node['bottomY'], node['topX'] + nodeWidth / 2, node['bottomY'] + this.shapesOffset / 3);
           this.createLine(node['topX'] + nodeWidth / 2, node['bottomY'] + this.shapesOffset / 3, node['topX'] - (this.shapesOffset / 2) + this.circleRadius, node['bottomY'] + this.shapesOffset / 3);
           this.createCircle(node['topX'], node['bottomY'] + this.shapesOffset / 3, branch.direction, branch.process);
