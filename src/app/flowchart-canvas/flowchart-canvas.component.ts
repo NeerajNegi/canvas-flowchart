@@ -39,7 +39,7 @@ export class FlowchartCanvasComponent implements OnInit {
     })
 
     this.dataLoader.getJSON().subscribe(res => {
-      this.data = this.transformData(res[7]);
+      this.data = this.transformData(res[0]);
       this.draw(this.data.root, this.ctx.canvas.width / 2, this.ctx.canvas.height / 2 - this.rectangleHeight / 2);
       this.canvasWrapper.nativeElement.scrollTo(this.data.root.topX - 500, 0);
       console.log(this.data);
@@ -56,24 +56,36 @@ export class FlowchartCanvasComponent implements OnInit {
     const nodeWidth = node['bottomX'] - node['topX']
     node.branches.forEach(branch => {
       if(branch.direction === 'right') {
-        x = node['bottomX'] + this.shapesOffset;
-        y = node['topY'];
-
-        this.createCircle(node['bottomX'], nodeHeight/2 + node['topY'], branch.direction, branch.process)
-
         if(node.rightBranchesCount === 0){
-          this.createLine(node['bottomX'], nodeHeight/2 + node['topY'], node['bottomX'] + (this.shapesOffset / 2) - this.circleRadius, nodeHeight/2 + node['topY']);
-          this.createLine(node['bottomX'] + (this.shapesOffset / 2) + this.circleRadius, nodeHeight/2 + node['topY'], node['bottomX'] + this.shapesOffset, nodeHeight/2 + node['topY']);
+          //draw below the node
+          x = node['bottomX'] + this.shapesOffset;
+          y = node['bottomY'] + this.shapesOffset / 3 - this.rectangleHeight / 2;
+
+          // Create straight line from center
+          // this.createLine(node['topX'], nodeHeight/2 + node['topY'], node['topX'] - (this.shapesOffset / 2) + this.circleRadius, nodeHeight/2 + node['topY']);
+          // this.createLine(node['topX'] - (this.shapesOffset / 2) - this.circleRadius, nodeHeight/2 + node['topY'], node['topX'] - this.shapesOffset, nodeHeight/2 + node['topY']);
+          // this.createCircle(node['topX'], nodeHeight/2 + node['topY'], branch.direction, branch.process)
+
+          this.createLine(node['bottomX'] - nodeWidth / 2, node['bottomY'], node['bottomX'] - nodeWidth / 2, node['bottomY'] + this.shapesOffset / 3);
+          this.createLine(node['bottomX'] - nodeWidth / 2, node['bottomY'] + this.shapesOffset / 3, node['bottomX'] + (this.shapesOffset / 2) - this.circleRadius, node['bottomY'] + this.shapesOffset / 3);
+          this.createCircle(node['bottomX'], node['bottomY'] + this.shapesOffset / 3, branch.direction, branch.process);
+          this.createLine(node['bottomX'] + (this.shapesOffset / 2) + this.circleRadius, node['bottomY'] + this.shapesOffset / 3, node['bottomX'] + this.shapesOffset, node['bottomY'] + this.shapesOffset / 3);
+
           node.rightBranchesCount++;
-        } else if(branch.rightBranchesCount === 1) {
-          this.createLine(node['topX'] + nodeWidth / 2, node['topY'], node['topX'] + nodeWidth / 2, node['topY'] - this.shapesOffset / 3);
-          this.createLine(node['topX'] + nodeWidth / 2, node['topY'] - this.shapesOffset / 3, node['bottomX'] + this.shapesOffset, node['topY'] - this.shapesOffset / 3);
+        } else if(node.rightBranchesCount === 1) {
+          //draw above the node
+          x = node['bottomX'] + this.shapesOffset;
+          y = node['topY'] - this.shapesOffset / 3 - this.rectangleHeight / 2;
+
+          this.createLine(node['bottomX'] - nodeWidth / 2, node['topY'], node['bottomX'] - nodeWidth / 2, node['topY'] - this.shapesOffset / 3);
+          this.createLine(node['bottomX'] - nodeWidth / 2, node['topY'] - this.shapesOffset / 3, node['bottomX'] + (this.shapesOffset / 2) - this.circleRadius, node['topY'] - this.shapesOffset / 3);
+          this.createCircle(node['bottomX'], node['topY'] - this.shapesOffset / 3, branch.direction, branch.process);
+          this.createLine(node['bottomX'] + (this.shapesOffset / 2) + this.circleRadius, node['topY'] - this.shapesOffset / 3, node['bottomX'] + this.shapesOffset, node['topY'] - this.shapesOffset / 3);
+
           node.rightBranchesCount++;
         }
       }
       if(branch.direction === 'left') {
-        console.log(branch);
-
         if(node.leftBranchesCount === 0){
           x = node['topX'] - this.shapesOffset - this.reactangleWidth;
           y = node['bottomY'] + this.shapesOffset / 3 - this.rectangleHeight / 2;
