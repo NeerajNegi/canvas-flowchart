@@ -56,6 +56,8 @@ export class FlowchartCanvasComponent implements OnInit {
     const nodeWidth = node['bottomX'] - node['topX']
     node.branches.forEach(branch => {
       if(branch.direction === 'right') {
+        console.log('Drawing right branch');
+        console.log('Right branch count', node.rightBranchesCount);
         if(node.rightBranchesCount === 0){
           //draw below the node
           x = node['bottomX'] + this.shapesOffset;
@@ -81,6 +83,8 @@ export class FlowchartCanvasComponent implements OnInit {
         }
       }
       if(branch.direction === 'left') {
+        console.log('Drawing left branch');
+        console.log('Left branch count', node.leftBranchesCount);
         if(node.leftBranchesCount === 0){
           //draw below the node
           x = node['topX'] - this.shapesOffset - this.reactangleWidth;
@@ -105,6 +109,7 @@ export class FlowchartCanvasComponent implements OnInit {
           node.leftBranchesCount++;
         }
       }
+      console.log(`Drawing at ${x} and ${y}`);
       this.draw(branch.material, x, y);
     });
   }
@@ -205,11 +210,17 @@ export class FlowchartCanvasComponent implements OnInit {
   }
 
   private showSelections(): void {
+    console.log('Showing Selections');
+    console.log(this.data);
     this.hideSelectionsMenu();
+    this.clearCanvas();
+    this.draw(this.data.root, this.ctx.canvas.width / 2, this.ctx.canvas.height / 2 - this.rectangleHeight / 2);
   }
 
   private clearCanvas(): void {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.ctx.fillStyle = '#d6d6d6';
+    this.ctx.fillRect(0,0, this.ctx.canvas.width,this.ctx.canvas.height);
   }
 
   //@TODO
